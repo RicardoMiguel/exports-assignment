@@ -13,6 +13,7 @@ const logger = require('./logger');
 
 async function task ({ vehicleDatabases, exportsDatabase }, id) {
     logger.info(`Gonna start task for ${id}`);
+    const hrStart = process.hrtime();
     const { value: newJob } = await job.startJob(exportsDatabase, id);
 
     logger.debug(`Retrieving information from ${newJob.startDate} to ${newJob.endDate}}`, {
@@ -41,7 +42,8 @@ async function task ({ vehicleDatabases, exportsDatabase }, id) {
     archive.on('end', () => logger.debug('end archive'));
 
     await job.finishJob(exportsDatabase, newJob._id, archiveFileName);
-    logger.info(`Finished task ${id}`)
+    const [ seconds, nanoSeconds ] = process.hrtime(hrStart);
+    logger.info(`Finished task ${id} in ${seconds}s (${nanoSeconds / 100000}ms)`)
 }
 
 async function run () {
@@ -50,7 +52,8 @@ async function run () {
         await queue.listenToQueue(task.bind(null, dbs));
         // await task(dbs, '5dfebecc97849bac3a1f34e0'); // testing purposes
     } catch (err) {
-        console.error(err);
+        logger.error(err);
+        throw err;
     }
 }
 

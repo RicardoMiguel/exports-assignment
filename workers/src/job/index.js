@@ -6,8 +6,10 @@ const states = {
     FINISHED: 'FINISHED'
 };
 
+const COLLECTION = 'jobs';
+
 function startJob(db, id) {
-    const collection = db.collection('jobs');
+    const collection = db.collection(COLLECTION);
 
     return collection.findOneAndUpdate(
         { _id: ObjectId(id) },
@@ -17,7 +19,7 @@ function startJob(db, id) {
 }
 
 function finishJob(db, id, fileKey) {
-    const collection = db.collection('jobs');
+    const collection = db.collection(COLLECTION);
 
     return collection.findOneAndUpdate(
         { _id: ObjectId(id) },

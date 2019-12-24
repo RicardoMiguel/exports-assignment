@@ -2,7 +2,7 @@ service: rest-api
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs12.14.0
   region: ${env:AWS_REGION}
   memorySize: 128
 
@@ -23,6 +23,8 @@ functions:
 custom:
   dotenv:
     path: ../.env
+  serverless-offline:
+    host: 0.0.0.0
 
 plugins:
   - serverless-offline

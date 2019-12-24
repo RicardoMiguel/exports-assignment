@@ -13,9 +13,9 @@ async function getDbs () {
         .filter((db) => db.name.startsWith('vehicle'))
         .map((db) => connection.db(db.name));
 
-    const exportsDatabase = connection.db(allDatabases.databases.find(db => db.name === 'exports').name);
+    const exportsDatabase = connection.db('exports');
 
-    return { vehicleDatabases, exportsDatabase };
+    return { connection, vehicleDatabases, exportsDatabase };
 }
 
 module.exports = { getDbs };

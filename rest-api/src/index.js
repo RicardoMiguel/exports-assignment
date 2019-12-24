@@ -7,6 +7,10 @@ async function getExport (id) {
     const exportDb = await db.getDb();
     const aJob = await job.getJob(exportDb, id);
 
+    if (aJob === null) {
+        throw new Error('NotFound');
+    }
+
     if (aJob.fileKey) {
         aJob.fileKey = await fileHosting.getTempLink(aJob.fileKey);
     }

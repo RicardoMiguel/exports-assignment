@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  rest-api:
+    build: rest-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - QUEUE_URI=amqp://rabbitmq
+    links:
+      - rabbitmq
+      - mongo
+    depends_on:
+      - rabbitmq
+
+  workers:
+    build: workers
+#    cpu_count: 2
+    restart: always   # should be on-failure but docker is not capturing correct exit code
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - QUEUE_URI=amqp://rabbitmq
+    links:
+      - rabbitmq
+      - mongo
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3.8.2
+
+  mongo:
+    image: mongo:4.2.2
+    ports:
+      - "27017:27017"

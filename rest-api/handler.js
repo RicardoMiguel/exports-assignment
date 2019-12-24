@@ -6,16 +6,26 @@ module.exports.getExport = async (event, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
 
     const jobId = event.pathParameters.jobId;
-    const job = await jobService.getExport(jobId);
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify(
-          job,
-          null,
-          2
-        ),
-      };
+    try {
+        const job = await jobService.getExport(jobId);
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(
+                job,
+                null,
+                2
+            ),
+        };
+    } catch (err) {
+        if (err.message === 'NotFound') {
+            return { statusCode: 404 };
+        }
+
+        return { statusCode: 500 };
+    }
+
 };
 
 module.exports.createExport = async (event, context) => {
