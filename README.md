@@ -3,7 +3,7 @@
 Check the [assignment](ASSIGNMENT.md) and [local setup](SETUP.md).
 
 ## Architecture
-
+![aws-serverless-image](docs/architecture.png)
 ## Design
 ### Reliability
 Unfortunately the reliability of this system can only be as reliable as the data of its indirect dependents (system 
