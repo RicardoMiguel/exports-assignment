@@ -1,7 +1,7 @@
 const amqp = require('amqplib');
 
 async function listenToQueue (task) {
-    const queue = process.env.QUEUE_NAME
+    const queue = process.env.QUEUE_NAME;
     const connection = await amqp.connect(process.env.QUEUE_URI);
     const channel = await connection.createChannel();
 

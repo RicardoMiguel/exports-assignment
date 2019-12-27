@@ -12,7 +12,8 @@ async function getExport (id) {
     }
 
     if (aJob.fileKey) {
-        aJob.fileKey = await fileHosting.getTempLink(aJob.fileKey);
+        aJob.exportUri = await fileHosting.getTempLink(aJob.fileKey);
+        delete aJob.fileKey;
     }
 
     return aJob;
