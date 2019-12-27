@@ -9,8 +9,13 @@ async function listenToQueue (task) {
 
     channel.consume(queue, async (msg) => {
         const content = msg.content.toString();
-        await task(content);
-        channel.ack(msg);
+        try {
+            await task(content);
+            channel.ack(msg);
+        } catch (err) {
+            channel.nack(msg);
+        }
+
     });
 }
 
