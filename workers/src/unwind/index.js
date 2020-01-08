@@ -1,5 +1,5 @@
-const { Transform } = require("stream");
 const unwind = require('./unwind');
+
 const collectionsNames = [
     'speed',
     'soc',
@@ -8,19 +8,25 @@ const collectionsNames = [
     'voltage',
 ];
 
-function allCollectionsAsStream(db, start, end) {
-    return collectionsNames.map((collectionName) => {
-        const dbCollection = db.collection(collectionName);
-
-        const stringify = new Transform({
-            objectMode: true,
-            transform(point, enc, cb) {
-                const string = `${point.time},${point.value}\n`;
-                return cb(null, string);
-            }
+function collectionUnwind(collection, start, end) {
+    const stream = unwind(collection, start, end);
+    const data = [];
+    return new Promise(function (resolve, reject) {
+        stream.on('data', function (chunk) {
+            data.push({ time: chunk.time, value: chunk.value });
         });
-        return { collectionName, stream: unwind(dbCollection, start, end).pipe(stringify) };
-    });
+        stream.on('end', () => resolve(data)  );
+        stream.on("error", error => reject(error));
+    })
 }
 
-module.exports = allCollectionsAsStream;
+function allCollections(db, start, end) {
+    const allCollections = collectionsNames.map((collection) => {
+        const dbCollection = db.collection(collection);
+        return collectionUnwind(dbCollection, start, end);
+    });
+
+    return Promise.all(allCollections);
+}
+
+module.exports = allCollections;

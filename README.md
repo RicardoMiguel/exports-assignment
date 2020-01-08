@@ -31,6 +31,10 @@ Something that would help this design is implementing the [Chaos Monkey](https:/
 production as it'd put some pressure on the system.
 
 High testing coverage would give bigger reliability and maintainability (in long-term).
+
+Due to the nature of the source data, the solution has to put all the data in memory - which is not optimal for various 
+reasons. A solution to circumvent that could be either create a huge migration to put vehicles' data all together or 
+create a tool to insert all that data into a different database. 
   
 ### REST API Access Permissions
 * **Database**: User with "ReadWrite" role to `exports.jobs` collection;
@@ -41,3 +45,30 @@ High testing coverage would give bigger reliability and maintainability (in long
 * **Database**: User with "Read" role to `vehicle` databases and "ReadWrite" role to `exports.jobs` collection;
 * **S3**: User with `PutObject` action in an attached S3 policy;
 * **RabbitMQ** User with permission for `basic.consume` to a specified queue.
+
+## Rest API
+### Get an Export Job Result;
+`GET /export/:ID` 
+```
+{
+  "_id": "ID",
+  "startDate": "DATE",
+  "endDate": "DATE",
+  "state": "NOT_STARTED | STARTED | FINISHED",
+  "exportUri": "STRING"
+}
+```
+
+### Create an Export Job
+```
+POST /export
+{ 
+    "startDate": "STRING (2018-11-30)",
+    "endDate": "STRING (2018-12-01)"
+}
+```
+
+```
+status: 202
+Location: JOB_URI
+```
